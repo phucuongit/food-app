@@ -2,19 +2,13 @@ import React, { useReducer, useState } from "react";
 import { View, Text } from "react-native";
 import SearchBar from "../components/SearchBar";
 import yelp from "../api/yelp";
+import ResultList from "../components/ResultList";
+import useRestaurant from "../hooks/useRestaurant";
 
 const SearchScreen = () => {
   const [term, setTerm] = useState("");
-  const [result, setResult] = useState([]);
-  const [errors, setErrorMessage] = useState([]);
-  const searchApi = async () => {
-    try {
-      const response = await yelp.get("/search");
-      console.log(response.data);
-    } catch (err) {
-      setErrorMessage("something went wrong");
-    }
-  };
+  const [searchApi, results, errorMessage] = useRestaurant();
+
   return (
     <View>
       <SearchBar
@@ -22,9 +16,14 @@ const SearchScreen = () => {
         onTermChange={(newTerm) => setTerm(newTerm)}
         onTermSubmit={searchApi}
       />
-      {errors ? <Text style={{ color: "red" }}>{errors}</Text> : null}
+      {errorMessage ? (
+        <Text style={{ color: "red" }}>{errorMessage}</Text>
+      ) : null}
 
-      <Text>We have found {result}</Text>
+      <Text>We have found {results.length}</Text>
+      <ResultList title="Món mặn" />
+      <ResultList title="Món ngọt" />
+      <ResultList title="Món nhẹ" />
     </View>
   );
 };
